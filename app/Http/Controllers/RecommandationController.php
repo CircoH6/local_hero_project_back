@@ -27,6 +27,8 @@ class RecommandationController extends Controller
      */
     public function store(Request $request)
     {
+       // dd($request->prestataire_id);
+
         $request->validate([
             'prestataire_id' => 'required|exists:prestataires,id',
         ]);

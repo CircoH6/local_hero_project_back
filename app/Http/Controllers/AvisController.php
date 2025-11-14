@@ -22,28 +22,30 @@ class AvisController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'prestataire_id' => 'required|exists:prestataires,id',
-            'note' => 'required|integer|min:1|max:5',
-            'commentaire' => 'required|string',
-        ]);
+{
 
-        $avis = Avis::create([
-            'user_id' => Auth::id(),
-            'prestataire_id' => $request->prestataire_id,
-            'note' => $request->note,
-            'commentaire' => $request->commentaire,
-        ]);
+    $request->validate([
+        'prestataire_id' => 'required|exists:prestataires,id',
+        'note' => 'required|integer|min:1|max:5',
+        'commentaire' => 'required|string',
+    ]);
 
-        // 🧮 Met à jour la note moyenne du prestataire automatiquement
-        PrestataireController::updateNoteMoyenne($request->prestataire_id);
+    $avis = Avis::create([
+        'user_id' => Auth::id(),
+        'prestataire_id' => $request->prestataire_id, // correct
+        'note' => $request->note,
+        'commentaire' => $request->commentaire,
+    ]);
 
-        return response()->json([
-            'message' => 'Avis ajouté avec succès.',
-            'data' => $avis,
-        ], 201);
-    }
+    // Mise à jour de la note moyenne
+    PrestataireController::updateNoteMoyenne($request->prestataire_id);
+
+    return response()->json([
+        'message' => 'Avis ajouté avec succès.',
+        'data' => $avis,
+    ], 201);
+}
+
 
     /**
      * Display the specified resource.

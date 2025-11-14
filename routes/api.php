@@ -15,12 +15,34 @@ Route::post("/register",[AuthentficatedController::class, "register"]);
 Route::post("/login",[AuthentficatedController::class, "login"]);
 
 Route::middleware('auth:api')->group(function () {
-    // Prestataires
-    Route::apiResource('prestataires', PrestataireController::class);
 
-    // Avis
-    Route::apiResource('avis', AvisController::class)->except(['update']);
+    //Vérifier le user connecté
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-    // Recommandations
-    Route::apiResource('recommandations', RecommandationController::class)->only(['store', 'index', 'destroy']);
+    // pour prestataires
+    Route::prefix('/prestataires')->group(function () {
+        Route::get('/index', [PrestataireController::class, 'index']);
+        Route::post('/store', [PrestataireController::class, 'store']);
+        Route::get('/show/{id}', [PrestataireController::class, 'show']);
+        Route::put('/update/{id}', [PrestataireController::class, 'update']);
+        Route::delete('/destroy/{id}', [PrestataireController::class, 'destroy']);
+    });
+
+    // pour avis
+    Route::prefix('/avis')->group(function () {
+        Route::get('/index', [AvisController::class, 'index']);
+        Route::post('/store/{id}', [AvisController::class, 'store']);
+        Route::get('/show/{id}', [AvisController::class, 'show']);
+        Route::delete('/destroy/{id}', [AvisController::class, 'destroy']);
+    });
+
+    // pour recommandations
+    Route::prefix('/recommandations')->group(function () {
+        Route::get('/index', [RecommandationController::class, 'index']);
+        Route::post('/store', [RecommandationController::class, 'store']);
+        Route::delete('/destroy/{id}', [RecommandationController::class, 'destroy']);
+    });
+
 });

@@ -15,7 +15,11 @@ class PrestataireController extends Controller
     public function index()
     {
         $prestataires = Prestataire::with('user', 'avis')->get();
-        return response()->json($prestataires);
+        return response()->json([
+            "status" => "success",
+            "data" => $prestataires,
+            "message" => "Liste des prestataires récupérée avec succès."
+        ]);
     }
 
     /**
@@ -41,7 +45,7 @@ class PrestataireController extends Controller
         return response()->json([
             'message' => 'Prestataire ajouté avec succès.',
             'data' => $prestataire,
-        ], 201);
+        ]);
     }
 
     /**
