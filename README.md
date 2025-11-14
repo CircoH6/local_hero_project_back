@@ -1,43 +1,36 @@
-# Local_Heroes_Project
+ Local_Heroes_Project
 
-**Local Heroes** est une plateforme qui permet aux utilisateurs de noter et recommander des artisans locaux. Les artisans (prestataires) sont ajoutés uniquement par les utilisateurs. Chaque utilisateur peut laisser un avis et une note après avoir ajouté un prestataire.
+Local Heroes est une API permettant aux utilisateurs d’ajouter, noter et recommander des prestataires locaux.
+Le projet utilise Laravel 12, MySQL et Laravel Passport pour gérer l’authentification API.
+
+---
+Fonctionnalités principales
+
+* Inscription et connexion des utilisateurs via API (Laravel Passport).
+* Ajout, consultation, modification et suppression de prestataires.
+* Système d’avis avec note (1 à 5) et commentaire.
+* Recalcul automatique de la note moyenne du prestataire.
+* Gestion des recommandations.
+* Sécurisation de toutes les routes (sauf register et login) via middleware auth:api.
 
 ---
 
-## 🚀 Fonctionnalités
+Installation du projet
 
-* Authentification utilisateur (register / login) via API avec Laravel Passport
-* CRUD pour les **prestataires** : ajouter, consulter, modifier, supprimer
-* CRUD pour les **avis** : ajouter un avis et une note, consulter, supprimer
-* Gestion des **recommandations** des prestataires
-* Calcul automatique de la **note moyenne** des prestataires
+1. Cloner le dépôt :
 
----
-
-## 🛠 Technologies utilisées
-
-* **Backend** : Laravel 12
-* **Base de données** : MySQL
-* **Authentification API** : Laravel Passport
-
----
-
-## 📦 Installation
-
-1. Cloner le projet :
-
-git clone https://github.com/TON_USERNAME/local-heroes-backend.git
+git clone https://github.com/TON_GITHUB/local-heroes-backend.git
 cd local-heroes-backend
 
-2. Installer les dépendances Composer :
+2. Installer les dépendances :
 
 composer install
 
-3. Copier le fichier .env :
+3. Copier le fichier d’environnement :
 
 cp .env.example .env
 
-4. Configurer les variables de la base de données dans .env :
+4. Configurer MySQL dans .env :
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -46,11 +39,11 @@ DB_DATABASE=local_heroes_db
 DB_USERNAME=root
 DB_PASSWORD=
 
-5. Générer la clé d’application :
+5. Générer la clé de l’application :
 
 php artisan key:generate
 
-6. Installer Laravel Passport :
+6. Installer Passport :
 
 php artisan passport:install
 
@@ -63,56 +56,66 @@ php artisan migrate
 php artisan serve
 
 ---
+Authentification (API Token)
 
-## 📡 Routes API principales
+L’API utilise Laravel Passport.
+Pour accéder aux endpoints protégés :
+
+1. Appeler /api/login
+2. Récupérer le access_token
+3. L’ajouter dans Postman dans le header :
+
+Authorization: Bearer VOTRE_TOKEN
+
+---
+
+Routes de l’API
 
 ### Authentification
 
-| Route       | Méthode | Description                 |
-| ----------- | ------- | --------------------------- |
-| /register   | POST    | Créer un compte utilisateur |
-| /login      | POST    | Se connecter                |
+* POST /api/register → inscription utilisateur
+* POST /api/login → connexion et obtention du token
 
 ### Prestataires
 
-| Route                        | Méthode | Description                  |
-| ---------------------------- | ------- | ---------------------------- |
-| /prestataires/index          | GET     | Lister tous les prestataires |
-| /prestataires/store          | POST    | Ajouter un prestataire       |
-| /prestataires/show/{id}      | GET     | Voir un prestataire          |
-| /prestataires/update/{id}    | PUT     | Mettre à jour un prestataire |
-| /prestataires/destroy/{id}   | DELETE  | Supprimer un prestataire     |
+* GET /api/prestataires/index
+* POST /api/prestataires/store
+* GET /api/prestataires/show/{id}
+* PUT /api/prestataires/update/{id}
+* DELETE /api/prestataires/destroy/{id}
 
 ### Avis
 
-| Route                | Méthode | Description                         |
-| -------------------- | ------- | ----------------------------------- |
-| /avis/index          | GET     | Lister tous les avis                |
-| /avis/store/{id}     | POST    | Ajouter un avis pour un prestataire |
-| /avis/show/{id}      | GET     | Voir un avis spécifique             |
-| /avis/destroy/{id}   | DELETE  | Supprimer un avis                   |
+* GET /api/avis/index
+* POST /api/avis/store/{id} (id = id du prestataire)
+* GET /api/avis/show/{id}
+* DELETE /api/avis/destroy/{id}
 
 ### Recommandations
 
-| Route                           | Méthode | Description                  |
-| ------------------------------- | ------- | ---------------------------- |
-| /recommandations/index          | GET     | Lister les recommandations   |
-| /recommandations/store          | POST    | Ajouter une recommandation   |
-| /recommandations/destroy/{id}   | DELETE  | Supprimer une recommandation |
+* GET /api/recommandations/index
+* POST /api/recommandations/store
+* DELETE /api/recommandations/destroy/{id}
 
-> ⚠️ Toutes les routes sauf /register et /login nécessitent un token Bearer valide.
+Tous ces endpoints nécessitent un token sauf register & login.
 
 ---
 
-## 🔑 Authentification avec Postman
+Utilisation avec Postman (simple)
 
-1. Créer un compte (/register)
-2. Se connecter (/login) → récupérer le access_token
-3. Ajouter un header Authorization: Bearer <access_token> sur toutes les autres requêtes
+1. Faire un **POST** sur /api/register pour créer un utilisateur.
+2. Faire un **POST** sur /api/login pour obtenir un token.
+3. Mettre ce token dans les Headers :
+
+Authorization: Bearer VOTRE_TOKEN
+
+4. Tester toutes les autres routes librement.
 
 ---
 
-## 💡 Notes
+Notes importantes
 
-* Les avis mettent automatiquement à jour la note moyenne du prestataire.
-* Les utilisateurs ne peuvent modifier ou supprimer que les prestataires et avis qu’ils ont créés.
+* Seul l’utilisateur ayant créé un prestataire peut le modifier ou le supprimer.
+* Même principe pour les avis.
+* La note moyenne se met automatiquement à jour après chaque nouvel avis.
+* L’API est entièrement RESTful et structurée pour être utilisée par un front-end comme Vue.js.
